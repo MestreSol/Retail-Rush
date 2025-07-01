@@ -50,7 +50,7 @@ class CalendarMechanics:
 
         if isinstance(season_config, dict):
             iterator = season_config.items()
-        else:  # list/tuple
+        else:
             iterator = [
                 (entry[0], entry[1])
                 for entry in season_config
