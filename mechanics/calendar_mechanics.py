@@ -23,10 +23,10 @@ class CalendarMechanics:
         }
 
         self.weather_symbols = {
-            forecast.Sunny: "☀️",  
-            forecast.Cloudy: "☁️",  
-            forecast.Snow: "❄️",  # Fixed: was forecast.Sunny
-            forecast.Rain: "🌧️"   
+            forecast.Sunny: "☀️",
+            forecast.Cloudy: "☁️",
+            forecast.Snow: "❄️",
+            forecast.Rain: "🌧️"
         }
 
         self.weather_names = {
@@ -47,17 +47,18 @@ class CalendarMechanics:
             ]
 
         seasons = []
-        # season_config is expected as a list of tuples or dicts
-        for entry in season_config:
-            # tuple/list: (name, days, …)
-            if isinstance(entry, (list, tuple)) and len(entry) >= 2:
-                name, days = entry[0], entry[1]
-            # dict: {"name":…, "days":…}
-            elif isinstance(entry, dict) and "name" in entry and "days" in entry:
-                name, days = entry["name"], entry["days"]
-            else:
-                continue
-            seasons.append(Season(name, days))
+
+        if isinstance(season_config, dict):
+            iterator = season_config.items()
+        else:  # list/tuple
+            iterator = [
+                (entry[0], entry[1])
+                for entry in season_config
+                if len(entry) >= 2
+            ]
+
+        for season_name, days in iterator:
+            seasons.append(Season(season_name, days))
 
         return seasons
     
