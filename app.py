@@ -2,6 +2,8 @@ import os
 import sys
 import streamlit as st
 
+from mechanics.calendar_mechanics import CalendarMechanics
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def main():
@@ -19,8 +21,12 @@ def main():
   
     if selected_tab == "📅 Calendário":
         st.title(selected_tab)
-        st.markdown("Este é um teste de conceito para o calendário.")
-        st.write("Aqui você pode adicionar funcionalidades relacionadas ao calendário.")
+        st.header("📅 Sistema de Calendário")
+        st.markdown("Teste do sistema de calendário com 365 dias, estações e previsão do tempo.")
+        
+        calendar_mechanics = CalendarMechanics()
+        calendar_mechanics.run()
+
     elif selected_tab == "💰 Mercado Financeiro":
         st.title(selected_tab)
         st.markdown("Este é um teste de conceito para o mercado financeiro.")
