@@ -2,18 +2,14 @@ import datetime
 import os
 import random
 import sys
-from turtle import pd, st
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
 import streamlit as st
 
-
-
 from Domain.Entity.Calendar.forecast import forecast
 from Domain.Entity.Calendar.game_date import GameDate
 from Domain.Entity.Calendar.season import Season
-
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -29,31 +25,42 @@ class CalendarMechanics:
         self.weather_symbols = {
             forecast.Sunny: "☀️",  
             forecast.Cloudy: "☁️",  
-            forecast.Sunny: "❄️",  
+            forecast.Snow: "❄️",  # Fixed: was forecast.Sunny
             forecast.Rain: "🌧️"   
         }
 
         self.weather_names = {
-            forecast.Sunny: "Ensolarado",  
-            forecast.Cloudy: "Nublado",  
-            forecast.Snow: "Nevando",  
-            forecast.Rain: "Chuvoso"   
+            forecast.Sunny: "Ensolarado",
+            forecast.Cloudy: "Nublado",
+            forecast.Snow: "Nevando",
+            forecast.Rain: "Chuvoso"
         }
 
-    def create_seasons(self,season_config=None):
-        if season_config is None:
+    def create_seasons(self, season_config=None):
+        # Default four seasons if nothing passed
+        if not season_config:
             return [
                 Season("Spring", 90),
                 Season("Summer", 90),
                 Season("Autumn", 90),
-                Season("Winter", 95)
+                Season("Winter", 95),
             ]
-        else:
-            seasons = []
-            for season_name, days in season_config.items():
-                seasons.append(Season(season_name, days))
-            return seasons
-        
+
+        seasons = []
+        # season_config is expected as a list of tuples or dicts
+        for entry in season_config:
+            # tuple/list: (name, days, …)
+            if isinstance(entry, (list, tuple)) and len(entry) >= 2:
+                name, days = entry[0], entry[1]
+            # dict: {"name":…, "days":…}
+            elif isinstance(entry, dict) and "name" in entry and "days" in entry:
+                name, days = entry["name"], entry["days"]
+            else:
+                continue
+            seasons.append(Season(name, days))
+
+        return seasons
+    
     def _get_season_for_date(self, date, seasons):
         for season in seasons:
             if season.is_in_season(date):
@@ -395,14 +402,10 @@ class CalendarMechanics:
         }
     
     def run(self):
-        """Executa a interface do sistema de calendário."""
-        
         st.markdown("#### 🎛️ Configurações")
         
-        # Configuração das estações
         st.markdown("##### 🌍 Configuração das Estações")
         
-        # Opção para usar estações padrão ou customizadas
         season_mode = st.radio(
             "Modo de configuração das estações:",
             ["🎯 Estações Padrão", "⚙️ Estações Customizadas"],
@@ -434,7 +437,6 @@ class CalendarMechanics:
         else:  # Estações Customizadas
             st.markdown("**Configure suas próprias estações:**")
             
-            # Inicializar session state para estações customizadas
             if 'custom_seasons' not in st.session_state:
                 st.session_state['custom_seasons'] = [
                     {"name": "Primavera", "days": 90, "symbol": "🌱"},
@@ -443,7 +445,6 @@ class CalendarMechanics:
                     {"name": "Inverno", "days": 95, "symbol": "❄️"}
                 ]
             
-            # Controles para adicionar/remover estações
             col_add1, col_add2 = st.columns([3, 1])
             with col_add1:
                 new_season_name = st.text_input("Nome da nova estação", placeholder="Ex: Estação das Chuvas")
@@ -457,7 +458,6 @@ class CalendarMechanics:
                     st.success(f"Estação '{new_season_name}' adicionada!")
                     st.rerun()
             
-            # Configurar cada estação customizada
             season_config = []
             for i, season in enumerate(st.session_state['custom_seasons']):
                 col1, col2, col3, col4 = st.columns([2, 1, 1, 0.5])
@@ -478,7 +478,6 @@ class CalendarMechanics:
                         st.session_state['custom_seasons'].pop(i)
                         st.rerun()
                 
-                # Atualizar dados
                 st.session_state['custom_seasons'][i] = {
                     "name": season_name,
                     "days": season_days,
@@ -487,13 +486,11 @@ class CalendarMechanics:
                 
                 season_config.append((season_name, season_days, season_symbol))
             
-            # Definir valores para compatibilidade (usar as primeiras 4 estações ou valores padrão)
             spring_days = season_config[0][1] if len(season_config) > 0 else 90
             summer_days = season_config[1][1] if len(season_config) > 1 else 90
             autumn_days = season_config[2][1] if len(season_config) > 2 else 90
             winter_days = season_config[3][1] if len(season_config) > 3 else 95
         
-        # Calcular total de dias das estações
         total_season_days = sum([config[1] for config in season_config])
         
         if total_season_days != 365:
@@ -508,7 +505,6 @@ class CalendarMechanics:
         col_config1, col_config2, col_config3 = st.columns([2, 2, 1])
         
         with col_config1:
-            # Permitir gerar até o total das estações configuradas, ou 365 se for maior
             max_days = max(365, total_season_days)
             default_days = 365 if total_season_days >= 365 else total_season_days
             days_to_generate = st.slider("📅 Dias para simular", 30, max_days, default_days)
@@ -523,12 +519,10 @@ class CalendarMechanics:
             else:
                 st.session_state['show_debug'] = False
         
-        # Botão centralizado
         col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
         with col_btn2:
             generate_data = st.button("🚀 Gerar Calendário", type="primary", use_container_width=True)
         
-        # Gerar dados quando o botão for clicado
         if generate_data:
             with st.spinner("🔄 Gerando dados do calendário..."):
                 df = self.generate_calendar_data(
@@ -721,4 +715,3 @@ class CalendarMechanics:
             - **📈 Análises**: Gráficos interativos com insights
             - **💾 Exportação**: Download em CSV e visualização tabular
             """)
-    
