@@ -3,6 +3,7 @@ import sys
 import streamlit as st
 
 from mechanics.calendar_mechanics import CalendarMechanics
+from mechanics.news_mechanics import NewsMechanics
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -16,7 +17,14 @@ def main():
 
     st.sidebar.title("🧪 Testes")
     st.sidebar.markdown("---")
-    tab_names = ["📅 Calendário", "💰 Mercado Financeiro", "🧪 Testes de Mesa", "📊 Comparação", "ℹ️ Sobre"]
+    tab_names = [
+        "📅 Calendário",
+        "💰 Mercado Financeiro",
+        "📰 Eventos",
+        "🧪 Testes de Mesa",
+        "📊 Comparação",
+        "ℹ️ Sobre",
+    ]
     selected_tab = st.sidebar.selectbox("Escolha uma seção:", tab_names)
   
     if selected_tab == "📅 Calendário":
@@ -31,6 +39,10 @@ def main():
         st.title(selected_tab)
         st.markdown("Este é um teste de conceito para o mercado financeiro.")
         st.write("Aqui você pode adicionar funcionalidades relacionadas ao mercado financeiro.")
+    elif selected_tab == "📰 Eventos":
+        st.title(selected_tab)
+        news_mechanics = NewsMechanics()
+        news_mechanics.run()
     elif selected_tab == "🧪 Testes de Mesa":
         st.title(selected_tab)
         st.markdown("Este é um teste de conceito para testes de mesa.")
