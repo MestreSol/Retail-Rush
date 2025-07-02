@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import random
+import pandas as pd
 import streamlit as st
 
 @dataclass
@@ -59,7 +60,14 @@ class ElectionMechanics:
         st.markdown("### 🗳 Eleições")
         st.write("Simule o impacto de diferentes candidatos.")
 
+        if "election_history" not in st.session_state:
+            st.session_state["election_history"] = []
+
         if st.button("Sortear Candidato"):
+            if "current_candidate" in st.session_state:
+                st.session_state["election_history"].append(
+                    st.session_state["current_candidate"]
+                )
             st.session_state["current_candidate"] = self.generate_candidate()
 
         candidate = st.session_state.get("current_candidate")
@@ -88,3 +96,22 @@ class ElectionMechanics:
                         f"Regulamentação: {result['regulation']:.2f} | "
                         f"Incentivos: {result['incentive']:.2f}"
                     )
+
+        history = st.session_state.get("election_history", [])
+        if history or candidate:
+            table_data = [
+                {
+                    "Candidato": c.name,
+                    "Tributação": c.tax_modifier,
+                    "Regulamentação": c.regulation_modifier,
+                    "Incentivos": c.incentive_modifier,
+                }
+                for c in history + ([candidate] if candidate else [])
+            ]
+            df = pd.DataFrame(table_data)
+            st.markdown("### Histórico de Candidatos")
+            st.dataframe(df, use_container_width=True)
+
+            chart_df = df[["Tributação", "Regulamentação", "Incentivos"]]
+            chart_df.index = range(1, len(chart_df) + 1)
+            st.line_chart(chart_df)
