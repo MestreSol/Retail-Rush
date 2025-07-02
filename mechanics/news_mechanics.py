@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import random
+import pandas as pd
 import streamlit as st
 
 @dataclass
@@ -42,7 +43,14 @@ class NewsMechanics:
         st.markdown("### 📰 Notícias e Eventos")
         st.write("Gere eventos aleatórios que afetam o mercado.")
 
+        if "news_history" not in st.session_state:
+            st.session_state["news_history"] = []
+
         if st.button("Gerar Evento"):
+            if "current_event" in st.session_state:
+                st.session_state["news_history"].append(
+                    st.session_state["current_event"]
+                )
             st.session_state["current_event"] = self.generate_event()
 
         event = st.session_state.get("current_event")
@@ -70,3 +78,22 @@ class NewsMechanics:
                         f"Demanda: {result['demand']:.2f} | "
                         f"Disponibilidade: {result['availability']:.2f}"
                     )
+
+        history = st.session_state.get("news_history", [])
+        if history or event:
+            table_data = [
+                {
+                    "Evento": ev.name,
+                    "Preço": ev.price_modifier,
+                    "Demanda": ev.demand_modifier,
+                    "Disponibilidade": ev.availability_modifier,
+                }
+                for ev in history + ([event] if event else [])
+            ]
+            df = pd.DataFrame(table_data)
+            st.markdown("### Histórico de Eventos")
+            st.dataframe(df, use_container_width=True)
+
+            chart_df = df[["Preço", "Demanda", "Disponibilidade"]]
+            chart_df.index = range(1, len(chart_df) + 1)
+            st.line_chart(chart_df)
