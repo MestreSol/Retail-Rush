@@ -7,6 +7,7 @@ from mechanics.news_mechanics import NewsMechanics
 from mechanics.election_mechanics import ElectionMechanics
 from mechanics.currency_mechanics import CurrencyMechanics
 from mechanics.product_mechanics import ProductMechanics
+from mechanics.inflation_mechanics import InflationMechanics
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,6 +25,7 @@ def main():
         "📅 Calendário",
         "💰 Mercado Financeiro",
         "💱 Moedas",
+        "📈 Inflação",
         "📦 Produtos",
         "📰 Eventos",
         "🗳 Eleições",
@@ -49,6 +51,27 @@ def main():
         st.title(selected_tab)
         currency_mechanics = CurrencyMechanics()
         currency_mechanics.run()
+    elif selected_tab == "📈 Inflação":
+        st.title(selected_tab)
+        inflation_mechanics = InflationMechanics()
+        # Simple placeholder interface
+        st.markdown("### Índice de Inflação")
+        if "inflation_system" not in st.session_state:
+            st.session_state["inflation_system"] = inflation_mechanics
+        else:
+            inflation_mechanics = st.session_state["inflation_system"]
+
+        col1, col2 = st.columns(2)
+        with col1:
+            shock = st.checkbox("Choque de Oferta/Demanda (+3%)", key="shock")
+            promo = st.number_input("Promoção (-%)", min_value=0.0, max_value=0.5, value=0.0, step=0.01, key="promo")
+            if st.button("Avançar Dia"):
+                inflation_mechanics.advance_day(shock=shock, promotion_effect=promo)
+        with col2:
+            st.metric("Índice Atual", f"{inflation_mechanics.current_index:.3f}")
+            history = [rec.index for rec in inflation_mechanics.history]
+            if history:
+                st.line_chart(history)
     elif selected_tab == "📦 Produtos":
         st.title(selected_tab)
         product_mechanics = ProductMechanics()
