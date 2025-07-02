@@ -8,6 +8,7 @@ from mechanics.election_mechanics import ElectionMechanics
 from mechanics.currency_mechanics import CurrencyMechanics
 from mechanics.product_mechanics import ProductMechanics
 from mechanics.inflation_mechanics import InflationMechanics
+from mechanics.region_mechanics import RegionMechanics
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -29,6 +30,7 @@ def main():
         "📦 Produtos",
         "📰 Eventos",
         "🗳 Eleições",
+        "🌐 Regiões",
         "🧪 Testes de Mesa",
         "📊 Comparação",
         "ℹ️ Sobre",
@@ -84,6 +86,10 @@ def main():
         st.title(selected_tab)
         election_mechanics = ElectionMechanics()
         election_mechanics.run()
+    elif selected_tab == "🌐 Regiões":
+        st.title(selected_tab)
+        region_mechanics = RegionMechanics()
+        region_mechanics.run()
     elif selected_tab == "🧪 Testes de Mesa":
         st.title(selected_tab)
         st.markdown("Este é um teste de conceito para testes de mesa.")
