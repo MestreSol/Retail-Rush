@@ -5,6 +5,7 @@ import streamlit as st
 from mechanics.calendar_mechanics import CalendarMechanics
 from mechanics.news_mechanics import NewsMechanics
 from mechanics.election_mechanics import ElectionMechanics
+from mechanics.inflation_mechanics import InflationMechanics
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -21,6 +22,7 @@ def main():
     tab_names = [
         "📅 Calendário",
         "💰 Mercado Financeiro",
+        "💹 Sistema de Inflação",
         "📰 Eventos",
         "🗳 Eleições",
         "🧪 Testes de Mesa",
@@ -41,6 +43,10 @@ def main():
         st.title(selected_tab)
         st.markdown("Este é um teste de conceito para o mercado financeiro.")
         st.write("Aqui você pode adicionar funcionalidades relacionadas ao mercado financeiro.")
+    elif selected_tab == "💹 Sistema de Inflação":
+        st.title(selected_tab)
+        inflation_mechanics = InflationMechanics()
+        inflation_mechanics.run()
     elif selected_tab == "📰 Eventos":
         st.title(selected_tab)
         news_mechanics = NewsMechanics()
