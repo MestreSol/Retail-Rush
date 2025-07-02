@@ -1,4 +1,4 @@
-from random import random
+import random
 from Domain.Entity.Map.region_type import region_type
 
 
@@ -41,3 +41,4 @@ class Region:
             "Residential": region_type.Residential
         }
         return mapping.get(self.code, None)
+
