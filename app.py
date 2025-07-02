@@ -6,6 +6,7 @@ from mechanics.calendar_mechanics import CalendarMechanics
 from mechanics.news_mechanics import NewsMechanics
 from mechanics.election_mechanics import ElectionMechanics
 from mechanics.currency_mechanics import CurrencyMechanics
+from mechanics.product_mechanics import ProductMechanics
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,6 +24,7 @@ def main():
         "📅 Calendário",
         "💰 Mercado Financeiro",
         "💱 Moedas",
+        "📦 Produtos",
         "📰 Eventos",
         "🗳 Eleições",
         "🧪 Testes de Mesa",
@@ -47,6 +49,10 @@ def main():
         st.title(selected_tab)
         currency_mechanics = CurrencyMechanics()
         currency_mechanics.run()
+    elif selected_tab == "📦 Produtos":
+        st.title(selected_tab)
+        product_mechanics = ProductMechanics()
+        product_mechanics.run()
     elif selected_tab == "📰 Eventos":
         st.title(selected_tab)
         news_mechanics = NewsMechanics()
