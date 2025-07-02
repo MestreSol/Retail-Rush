@@ -4,6 +4,7 @@ import streamlit as st
 
 from mechanics.calendar_mechanics import CalendarMechanics
 from mechanics.news_mechanics import NewsMechanics
+from mechanics.election_mechanics import ElectionMechanics
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -21,6 +22,7 @@ def main():
         "📅 Calendário",
         "💰 Mercado Financeiro",
         "📰 Eventos",
+        "🗳 Eleições",
         "🧪 Testes de Mesa",
         "📊 Comparação",
         "ℹ️ Sobre",
@@ -43,6 +45,10 @@ def main():
         st.title(selected_tab)
         news_mechanics = NewsMechanics()
         news_mechanics.run()
+    elif selected_tab == "🗳 Eleições":
+        st.title(selected_tab)
+        election_mechanics = ElectionMechanics()
+        election_mechanics.run()
     elif selected_tab == "🧪 Testes de Mesa":
         st.title(selected_tab)
         st.markdown("Este é um teste de conceito para testes de mesa.")
