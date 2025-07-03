@@ -1,4 +1,4 @@
-# Dawson Miller Supermarket Systems
+# Retail Rush
 
 Um simulador de gestão de supermercado em Unity 3D, com multiplayer client–server usando Mirror. No papel de gestor, você administrará estoques, finanças, marketing e logística, em modos cooperativo ou competitivo, em cenários dinâmicos e realistas.
 
